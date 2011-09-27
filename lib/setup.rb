@@ -19,4 +19,8 @@ SimpleAuth::Config.setup do |config|
   config.user_objects = {
     :user => User
   }
+
+  config.user_object_for_path = {
+    "" => User
+  }
 end

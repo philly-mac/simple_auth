@@ -33,6 +33,10 @@ module SimpleAuth
       user_object.find(user_id)
     end
 
+    def user_class(key)
+      SimpleAuth::Config.user_objects(key)
+    end
+
   end
 end
 

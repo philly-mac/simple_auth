@@ -11,45 +11,46 @@ module SimpleAuth
 
         # New
         app.get '/users/new/?' do
-          @user = User.new
+          # need to see what in sinatra can identify this route
+          @user = user_class('something').new
           render '/users/new'
         end
 
         # Create
         app.post '/users/?' do
-          @user = User.new params[:user]
+          @user = user_class('something').new params[:user]
 
           if @user.save
-            flash[:notice] = warden_auth_options[:registration_successful_message]
+            flash[:notice] = SimpleAuth::Config.registration_successful_message
             redirect '/'
           else
-            flash[:error] = warden_auth_options[:registration_unsuccessful_message]
+            flash[:error] = SimpleAuth::Config.registration_unsuccessful_message
             render '/users/new'
           end
         end
 
         # Edit
-        app.get '/users/edit/?' do
-          @user = user_clazz.new
+        app.get '/users/edit/:id' do
+          @user = user_class('something').find(params[:id])
           render '/users/edit'
         end
 
         # Update
         app.put '/users/?' do
-          @user = User.new params[:user]
+          @user = SimpleAuth::Config.user
 
           if @user.save
-            flash[:notice] = warden_auth_options[:update_successful_message]
+            flash[:notice] = SimpleAuth::Config.update_successful_message
             redirect '/'
           else
-            flash[:error] = warden_auth_options[:update_unsuccessful_message]
+            flash[:error] = SimpleAuth::Config.update_unsuccessful_message
             render '/users/new'
           end
         end
 
         # Confirm
         app.get '/users/confirm/:confirm_code' do
-          if User.activate params[:confirm_code]
+          if user_class('something').activate params[:confirm_code]
             flash[:notice] = warden_auth_options[:registration_confirmed_message]
             redirect '/'
           else
