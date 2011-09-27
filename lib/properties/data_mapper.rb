@@ -1,4 +1,4 @@
-module WardenAuth
+module SimpleAuth
   module Properties
     module DataMapper
 
@@ -11,6 +11,7 @@ module WardenAuth
 
           property :id,               ::DataMapper::Property::Serial
           property :email,            ::DataMapper::Property::String,  :default => '', :length => (5..255), :format => :email_address, :unique => true
+          property :username,         ::DataMapper::Property::String,  :unique  => true, :format => /(\w+|-){6,32}/
           property :crypted_password, ::DataMapper::Property::String,  :default => '', :length => (10..255)
           property :username,         ::DataMapper::Property::String,  :default => '', :unique => true
           property :perishable_token, ::DataMapper::Property::String,  :default => '', :length => 255, :unique => true
