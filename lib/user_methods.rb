@@ -1,5 +1,5 @@
-module WardenAuth
-  module Methods
+module SimpleAuth
+  module UserMethods
 
     def self.included(base)
       base.class_eval do
@@ -34,19 +34,17 @@ module WardenAuth
       end
 
       def encrypt_password
-        self.crypted_password = BCrypt::Password.create(password) if password.present?
+        self.crypted_password = BCrypt::Password.create(password, :cost => 10) if password.present?
       end
 
       def create_perishable_token
         token = ''
+        alphanumeric = ('a'..'z').to_a + (0..10).to_a
         begin
           token = (1..64).map {
             if rand(2) == 0
-              letter = ('a'..'z').to_a.random_element;
-              letter = letter.upcase if rand(2) == 0
-              letter
-            else
-              (0..10).to_a.random_element
+              letter = alphanumeric[rand(alphanumeric.size)];
+              rand(2) == 0 ? letter.to_s : letter.to_s.upcase
             end
           }.join
         end while User.first(:perishable_token => token)
