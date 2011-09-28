@@ -17,9 +17,8 @@ module SimpleAuth
         )
 
         if user
-          current_user = user
-          notice = SimpleAuth::Config.logged_in_message
-          redirect params[:redirect_path] || '/'
+          self.current_user = user
+          redirect_to params[:redirect_path] || '/', :notice => SimpleAuth::Config.authenticated_message
         else
           alert.now = SimpleAuth::Config.unauthenticated_message
           render '/sessions/new'

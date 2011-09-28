@@ -56,13 +56,14 @@ module SimpleAuth
       end
 
       def active?
-        activated && !activated_at.nil? && activated_at.is_a?(DateTime)
+        self.activated? && !activated_at.nil? && activated_at.is_a?(DateTime)
       end
 
       def set_as_active
         self.activated = true
         self.activated_at = Time.now
         create_perishable_token
+        save!
       end
       alias_method :activate!, :set_as_active
     end
