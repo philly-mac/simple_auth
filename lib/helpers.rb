@@ -46,7 +46,6 @@ module SimpleAuth
           nil
         end
       end
-
     end
 
   end

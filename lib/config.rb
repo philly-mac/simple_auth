@@ -3,16 +3,21 @@ module SimpleAuth
 
     class << self
 
-      def self.setup
+      def setup
         yield self
       end
 
       def class_attr_accessor(name)
-        define_method name do
-          class_variable_get "@@#{name}"
-        end
-        define_method "#{name}=" do |new_val|
+        name = name.to_s.gsub("=", '')
+        getter = :"#{name}"
+        setter = :"#{name}="
+
+        define_singleton_method :"#{setter}" do |new_val|
           class_variable_set "@@#{name}", new_val
+        end
+
+        define_singleton_method :"#{getter}" do
+          class_variable_get "@@#{name}"
         end
       end
 
@@ -26,3 +31,4 @@ module SimpleAuth
   end
 
 end
+
