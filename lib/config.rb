@@ -12,7 +12,7 @@ module SimpleAuth
           class_variable_get "@@#{name}"
         end
         define_method "#{name}=" do |new_val|
-          class_variable_set "@@#{name}" new_val
+          class_variable_set "@@#{name}", new_val
         end
       end
 
