@@ -64,6 +64,7 @@ module SimpleAuth
         self.activated_at = Time.now
         create_perishable_token
       end
+      alias_method :activate!, :set_as_active
     end
   end
 
