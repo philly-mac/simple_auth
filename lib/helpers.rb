@@ -27,10 +27,14 @@ module SimpleAuth
     end
 
     def unserialize_current_user
-      session[:user] =~ /^(.+):(\d+)$/
-      user_object = Kernel.const_get($1)
-      user_id = $2.to_i
-      user_object.find(user_id)
+      if session[:user] =~ /^(.+):(\d+)$/
+        user_object = Kernel.const_get($1) unless $1.nil
+        user_id = $2.to_i unless $2.nil
+
+        $1 && $2 ? user_object.find(user_id) : nil
+      else
+        nil
+      end
     end
 
     def user_class(key)
