@@ -17,12 +17,17 @@ module SimpleAuth
         )
 
         if user
-          self.current_user = user
-          redirect_to params[:redirect_path] || '/', :notice => SimpleAuth::Config.authenticated_message
+          if user.active?
+            self.current_user = user
+            redirect_to params[:redirect_path] || '/', :notice => SimpleAuth::Config.authenticated_message
+            return
+          else
+            flash.now[:alert] = SimpleAuth::Config.registration_not_confirmed_message
+          end
         else
           flash.now[:alert] = SimpleAuth::Config.unauthenticated_message
-          render '/sessions/new'
         end
+        render '/sessions/new'
       end
 
       def destroy

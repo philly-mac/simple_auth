@@ -19,7 +19,7 @@ module SimpleAuth
 
       def authenticate(email, password)
         u = self.first(:email => email)
-        u && u.has_password?(password) && u.active? ? u : nil
+        u && u.has_password?(password) ? u : nil
       end
     end
 
