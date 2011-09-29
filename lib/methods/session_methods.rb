@@ -22,7 +22,7 @@ module SimpleAuth
             redirect_to params[:redirect_path] || '/', :notice => SimpleAuth::Config.authenticated_message
             return
           else
-            flash.now[:alert] = SimpleAuth::Config.registration_not_confirmed_message
+            flash.now[:alert] = SimpleAuth::Config.registration_unconfirmed_message
           end
         else
           flash.now[:alert] = SimpleAuth::Config.unauthenticated_message
