@@ -14,11 +14,11 @@ module SimpleAuth
         end
 
         def new
-          @user = user_class(params[:controller]).new
+          @user = SimpleAuth::Config.user_object.new
         end
 
         def create
-          @user = user_class(params[:controller]).new params[:user]
+          @user = SimpleAuth::Config.user_object.new params[:user]
 
           if @user.save
             notice = SimpleAuth::Config.registration_successful_message
@@ -35,7 +35,7 @@ module SimpleAuth
         end
 
         def update
-          @user = user_class(params[:controller]).new params[:user]
+          @user = SimpleAuth::Config.user_object.new params[:user]
 
           if @user.save
             notice = SimpleAuth::Config.update_successful_message
@@ -47,7 +47,7 @@ module SimpleAuth
         end
 
         def confirm
-          if user_class(params[:controller]).activate params[:confirm_code]
+          if SimpleAuth::Config.user_object.activate params[:confirm_code]
             notice = SimpleAuth::Config.registration_confirmed_message
             redirect '/'
           else
