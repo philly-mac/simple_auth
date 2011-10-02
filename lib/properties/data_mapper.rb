@@ -11,16 +11,16 @@ module SimpleAuth
 
           property :id,               ::DataMapper::Property::Serial
           property :email,            ::DataMapper::Property::String,  :default => '', :length => (5..255), :format => :email_address, :unique => true
-          property :username,         ::DataMapper::Property::String,  :unique  => true, :format => /(\w+|-){6,32}/
+          property :username,         ::DataMapper::Property::String,  :default => ''
           property :crypted_password, ::DataMapper::Property::String,  :default => '', :length => (10..255)
-          property :username,         ::DataMapper::Property::String,  :default => '', :unique => true
           property :perishable_token, ::DataMapper::Property::String,  :default => '', :length => 255, :unique => true
           property :activated,        ::DataMapper::Property::Boolean, :default => false
           property :activated_at,     ::DataMapper::Property::DateTime
 
           timestamps :at
 
-          validates_length_of       :username, :in => (6..32), :if => :username_entered?
+          validates_length_of       :username, :if => :username_entered?, :in => (6..32)
+          validates_uniqueness_of   :username, :if => :username_entered?
           validates_uniqueness_of   :email
           validates_presence_of     :password, :password_confirmation, :if => :new?
           validates_confirmation_of :password, :if => Proc.new {|u| !u.password.blank? }
