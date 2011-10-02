@@ -47,12 +47,12 @@ module SimpleAuth
         end
 
         def confirm
-          if SimpleAuth::Config.user_object.activate params[:confirm_code]
+          if SimpleAuth::Config.user_object.activate params[:confirmation_code]
             notice = SimpleAuth::Config.registration_confirmed_message
-            redirect '/'
+            redirect_to '/'
           else
             alert = SimpleAuth::Config.registration_not_confirmed_message
-            redirect '/'
+            redirect_to '/'
           end
         end
 
