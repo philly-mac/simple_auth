@@ -9,6 +9,12 @@ module SimpleAuth
 
     module InstanceMethods
 
+      def authenticate!
+        unless current_user
+          redirect_to root_path
+        end
+      end
+
       def current_user
         unserialize_current_user
       end
