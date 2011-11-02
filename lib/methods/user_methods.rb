@@ -21,10 +21,10 @@ module SimpleAuth
           @user = SimpleAuth::Config.user_object.new params[:user]
 
           if @user.save
-            notice = SimpleAuth::Config.registration_successful_message
+            flash[:notice] = SimpleAuth::Config.registration_successful_message
             redirect_to '/'
           else
-            alert.now = SimpleAuth::Config.registration_unsuccessful_message
+            flash.now[:alert] = SimpleAuth::Config.registration_unsuccessful_message
             render '/users/new'
           end
         end
@@ -38,20 +38,20 @@ module SimpleAuth
           @user = SimpleAuth::Config.user_object.new params[:user]
 
           if @user.save
-            notice = SimpleAuth::Config.update_successful_message
+            flash[:notice] = SimpleAuth::Config.update_successful_message
             redirect_to '/'
           else
-            alert.now = SimpleAuth::Config.update_unsuccessful_message
+            flash.now[:alert] = SimpleAuth::Config.update_unsuccessful_message
             render '/users/new'
           end
         end
 
         def confirm
           if SimpleAuth::Config.user_object.activate params[:confirmation_code]
-            notice = SimpleAuth::Config.registration_confirmed_message
+            flash[:notice] = SimpleAuth::Config.registration_confirmed_message
             redirect_to '/'
           else
-            alert = SimpleAuth::Config.registration_not_confirmed_message
+            flash[:alert] = SimpleAuth::Config.registration_not_confirmed_message
             redirect_to '/'
           end
         end

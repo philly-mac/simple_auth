@@ -24,12 +24,11 @@ module SimpleAuth
       end
 
       def log_out
-        session[:user_id] = nil
-        session[:user_class] = nil
+        session[:logged_in_user] = nil
       end
 
       def logged_in?
-        current_user != nil
+        !current_user.nil?
       end
 
       def logged_out?
@@ -37,12 +36,12 @@ module SimpleAuth
       end
 
       def serialize_current_user(user)
-        session[:user] = "#{user.class}:#{user.id}"
+        session[:logged_in_user] = "#{user.class}:#{user.id}"
       end
 
       def unserialize_current_user
         return @current_user if @current_user
-        if session[:user] =~ /^(.+):(\d+)$/
+        if session[:logged_in_user] =~ /^(.+):(\d+)$/
           user_object = Kernel.const_get($1) unless $1.nil?
           user_id = $2.to_i unless $2.nil?
 
