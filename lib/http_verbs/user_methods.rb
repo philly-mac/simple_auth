@@ -4,20 +4,25 @@ module SimpleAuth
       def self.registered(app)
         # We'll even do the user registration methods for you as well
 
+        params = defined?(Padrino) ? [:index, :map => '/users'] : ['/users']
+
         # Index
-        app.get '/users/?' do
+        app.get(*params) do
           render '/'
         end
 
+        params = defined?(Padrino) ? [:new, {:map => '/users/new', :priority => :low}] : ['/users/new']
+
         # New
-        app.get '/users/new/?' do
-          # need to see what in sinatra can identify this route
-          @user = user_class('something').new
+        app.get(*params) do
+          @user = SimpleAuth::Config.user_object.new
           render '/users/new'
         end
 
+        params = defined?(Padrino) ? [:create, {:map => '/users', :priority => :low}] : ['/users']
+
         # Create
-        app.post '/users/?' do
+        app.post(*params) do
           @user = user_class('something').new params[:user]
 
           if @user.save
@@ -29,14 +34,18 @@ module SimpleAuth
           end
         end
 
+        params = defined?(Padrino) ? [:edit, {:map => '/users/:id/edit', :priority => :low}] : ['/users/:id/edit']
+
         # Edit
-        app.get '/users/edit/:id' do
+        app.get(*params) do
           @user = user_class('something').find(params[:id])
           render '/users/edit'
         end
 
+        params = defined?(Padrino) ? [:update, {:map => '/users/:id', :priority => :low}] : ['/users/:id']
+
         # Update
-        app.put '/users/?' do
+        app.put(*params) do
           @user = SimpleAuth::Config.user
 
           if @user.save
@@ -48,8 +57,16 @@ module SimpleAuth
           end
         end
 
+        params = defined?(Padrino) ? [:delete, {:map => '/users/:id', :priority => :low}] : ['/users/:id']
+
+        app.delete(*params) do
+
+        end
+
+        params = defined?(Padrino) ? [:confirm, {:map => '/users/confirm/:confirm_code', :priority => :low}] : ['/users/confirm/:confirm_code']
+
         # Confirm
-        app.get '/users/confirm/:confirm_code' do
+        app.get(*params) do
           if user_class('something').activate params[:confirm_code]
             flash[:notice] = warden_auth_options[:registration_confirmed_message]
             redirect '/'

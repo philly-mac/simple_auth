@@ -23,7 +23,7 @@ module SimpleAuth
         serialize_current_user(user)
       end
 
-      def log_out
+      def log_out!
         session[:logged_in_user] = nil
       end
 

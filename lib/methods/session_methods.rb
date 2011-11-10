@@ -32,7 +32,7 @@ module SimpleAuth
 
       def destroy
         if logged_in?
-          log_out
+          log_out!
           flash.notice = SimpleAuth::Config.logged_out_message
         end
         redirect_to '/sessions/new'
