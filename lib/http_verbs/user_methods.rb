@@ -4,25 +4,25 @@ module SimpleAuth
       def self.registered(app)
         # We'll even do the user registration methods for you as well
 
-        params = defined?(Padrino) ? [:index, :map => '/users'] : ['/users']
+        paramz = defined?(Padrino) ? [:index, :map => '/users'] : ['/users']
 
         # Index
-        app.get(*params) do
+        app.get(*paramz) do
           render '/'
         end
 
-        params = defined?(Padrino) ? [:new, {:map => '/users/new', :priority => :low}] : ['/users/new']
+        paramz = defined?(Padrino) ? [:new, {:map => '/users/new', :priority => :low}] : ['/users/new']
 
         # New
-        app.get(*params) do
+        app.get(*paramz) do
           @user = SimpleAuth::Config.user_object.new
           render '/users/new'
         end
 
-        params = defined?(Padrino) ? [:create, {:map => '/users', :priority => :low}] : ['/users']
+        paramz = defined?(Padrino) ? [:create, {:map => '/users', :priority => :low}] : ['/users']
 
         # Create
-        app.post(*params) do
+        app.post(*paramz) do
           @user = user_class('something').new params[:user]
 
           if @user.save
@@ -34,18 +34,18 @@ module SimpleAuth
           end
         end
 
-        params = defined?(Padrino) ? [:edit, {:map => '/users/:id/edit', :priority => :low}] : ['/users/:id/edit']
+        paramz = defined?(Padrino) ? [:edit, {:map => '/users/:id/edit', :priority => :low}] : ['/users/:id/edit']
 
         # Edit
-        app.get(*params) do
+        app.get(*paramz) do
           @user = user_class('something').find(params[:id])
           render '/users/edit'
         end
 
-        params = defined?(Padrino) ? [:update, {:map => '/users/:id', :priority => :low}] : ['/users/:id']
+        paramz = defined?(Padrino) ? [:update, {:map => '/users/:id', :priority => :low}] : ['/users/:id']
 
         # Update
-        app.put(*params) do
+        app.put(*paramz) do
           @user = SimpleAuth::Config.user
 
           if @user.save
@@ -57,23 +57,24 @@ module SimpleAuth
           end
         end
 
-        params = defined?(Padrino) ? [:delete, {:map => '/users/:id', :priority => :low}] : ['/users/:id']
+        paramz = defined?(Padrino) ? [:delete, {:map => '/users/:id', :priority => :low}] : ['/users/:id']
 
-        app.delete(*params) do
+        app.delete(*paramz) do
 
         end
 
-        params = defined?(Padrino) ? [:confirm, {:map => '/users/confirm/:confirm_code', :priority => :low}] : ['/users/confirm/:confirm_code']
+        paramz = defined?(Padrino) ? [:confirm, {:map => '/users/confirm/:confirmation_code', :priority => :low}] : ['/users/confirm/:confirm_code']
 
         # Confirm
-        app.get(*params) do
-          if user_class('something').activate params[:confirm_code]
-            flash[:notice] = warden_auth_options[:registration_confirmed_message]
+        app.get(*paramz) do
+          if SimpleAuth::Config.user_object.activate params[:confirmation_code]
+            flash[:notice] = SimpleAuth::Config.registration_confirmed_message
             redirect '/'
           else
-            flash[:error] = warden_auth_options[:registration_not_confirmed_message]
+            flash[:alert] = SimpleAuth::Config.registration_not_confirmed_message
             redirect '/'
           end
+
         end
       end
     end
