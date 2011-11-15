@@ -11,7 +11,7 @@ module SimpleAuth
 
       def authenticate!
         unless current_user
-          redirect_to root_path
+          yield if block_given?
         end
       end
 
