@@ -63,7 +63,9 @@ module SimpleAuth
 
         end
 
-        paramz = defined?(Padrino) ? [:confirm, {:map => '/users/confirm/:confirmation_code', :priority => :low}] : ['/users/confirm/:confirm_code']
+        paramz = defined?(Padrino) ? [:confirmation_code, {:map => '/users/confirm/:confirmation_code', :priority => :low}] : ['/users/confirm/:confirmation_code']
+
+        puts paramz.inspect
 
         # Confirm
         app.get(*paramz) do
