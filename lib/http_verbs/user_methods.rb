@@ -4,78 +4,93 @@ module SimpleAuth
       def self.registered(app)
         # We'll even do the user registration methods for you as well
 
+        # Index
+        map_route = SimpleAuth::Config.index_user_path
         paramz = defined?(Padrino) ? [:index, :map => '/users'] : ['/users']
 
-        # Index
         app.get(*paramz) do
-          render '/'
+          SimpleAuth::Common::UserMethods.method_index
         end
-
-        paramz = defined?(Padrino) ? [:new, {:map => '/users/new', :priority => :low}] : ['/users/new']
 
         # New
-        app.get(*paramz) do
-          @user = SimpleAuth::Config.user_object.new
-          render '/users/new'
-        end
+        map_route = SimpleAuth::Config.new_user_path
+        paramz = defined?(Padrino) ? [:new, {:map => map_route, :priority => :low}] : [map_route]
 
-        paramz = defined?(Padrino) ? [:create, {:map => '/users', :priority => :low}] : ['/users']
+        app.get(*paramz) do
+          SimpleAuth::Common::UserMethods.method_new(app, params)
+        end
 
         # Create
+        map_route = SimpleAuth::Config.create_user_path
+        paramz = defined?(Padrino) ? [:create, {:map => map_route, :priority => :low}] : [map_route]
+
         app.post(*paramz) do
-          @user = user_class('something').new params[:user]
-
-          if @user.save
-            flash[:notice] = SimpleAuth::Config.registration_successful_message
-            redirect '/'
-          else
-            flash[:error] = SimpleAuth::Config.registration_unsuccessful_message
-            render '/users/new'
-          end
+          SimpleAuth::Common::UserMethods.method_create(app, params)
         end
-
-        paramz = defined?(Padrino) ? [:edit, {:map => '/users/:id/edit', :priority => :low}] : ['/users/:id/edit']
 
         # Edit
-        app.get(*paramz) do
-          @user = user_class('something').find(params[:id])
-          render '/users/edit'
-        end
+        map_route = SimpleAuth::Config.edit_user_path
+        paramz = defined?(Padrino) ? [:edit, {:map => map_route, :priority => :low}] : [map_route]
 
-        paramz = defined?(Padrino) ? [:update, {:map => '/users/:id', :priority => :low}] : ['/users/:id']
+        app.get(*paramz) do
+          SimpleAuth::Common::UserMethods.method_edit(app, params)
+        end
 
         # Update
-        app.put(*paramz) do
-          @user = SimpleAuth::Config.user
+        map_route = SimpleAuth::Config.edit_user_path
+        paramz = defined?(Padrino) ? [:update, {:map => map_route, :priority => :low}] : [map_route]
 
-          if @user.save
-            flash[:notice] = SimpleAuth::Config.update_successful_message
-            redirect '/'
-          else
-            flash[:error] = SimpleAuth::Config.update_unsuccessful_message
-            render '/users/new'
-          end
+        app.put(*paramz) do
+          SimpleAuth::Common::UserMethods.method_update(app, params)
         end
 
-        paramz = defined?(Padrino) ? [:delete, {:map => '/users/:id', :priority => :low}] : ['/users/:id']
+        map_route = SimpleAuth::Config.update_user_path
+        paramz = defined?(Padrino) ? [:delete, {:map => map_route, :priority => :low}] : [map_route]
 
         app.delete(*paramz) do
-
+          SimpleAuth::Common::UserMethods.method_delete(app, params)
         end
-
-        paramz = defined?(Padrino) ? [:confirmation_code, {:map => '/users/confirm/:confirmation_code', :priority => :low}] : ['/users/confirm/:confirmation_code']
 
         # Confirm
-        app.get(*paramz) do
-          if SimpleAuth::Config.user_object.activate params[:confirmation_code]
-            flash[:notice] = SimpleAuth::Config.registration_confirmed_message
-            redirect '/'
-          else
-            flash[:alert] = SimpleAuth::Config.registration_not_confirmed_message
-            redirect '/'
-          end
+        map_route = SimpleAuth::Config.confirmation_user_path
+        paramz = defined?(Padrino) ? [:confirmation_code, {:map => map_route, :priority => :low}] : [map_route]
 
+        app.get(*paramz) do
+          SimpleAuth::Common::UserMethods.method_confirm(app, params)
         end
+
+        # Confirm resend form
+        map_route = SimpleAuth::Config.confirmation_resend_user_path
+        paramz = defined?(Padrino) ? [:confirmation_resend, {:map => map_route, :priority => :low}] : [map_route]
+
+        app.get(*paramz) do
+          SimpleAuth::Common::UserMethods.method_confirm_resend_form
+        end
+
+        # Confirm resend submit
+        map_route = SimpleAuth::Config.confirmation_resend_user_path
+        paramz = defined?(Padrino) ? [:confirmation_resend, {:map => map_route, :priority => :low}] : [map_route]
+
+        app.put(*paramz) do
+          SimpleAuth::Common::UserMethods.method_confirm_resend
+        end
+
+        # Forgot password form
+        map_route = SimpleAuth::Config.forgot_password_user_path
+        paramz = defined?(Padrino) ? [:forgot_password, {:map => map_route, :priority => :low}] : [map_route]
+
+        app.get(*paramz) do
+          SimpleAuth::Common::UserMethods.method_forgot_password_form
+        end
+
+        # Forgot password submit
+        map_route = SimpleAuth::Config.forgot_password_user_path
+        paramz = defined?(Padrino) ? [:forgot_password, {:map => map_route, :priority => :low}] : [map_route]
+
+        app.put(*paramz) do
+          SimpleAuth::Common::UserMethods.method_forgot_password
+        end
+
       end
     end
   end

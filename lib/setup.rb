@@ -16,11 +16,20 @@ SimpleAuth::Config.setup do |config|
   config.login_field             = ""
   config.password_field          = ""
 
-  config.user_objects = {
-    :user => User
-  }
+  config.user_object             = nil
 
-  config.user_object_for_path = {
-    "" => User
-  }
+  # Redirects and renders
+
+  config.index_user_path         = '/users'
+  config.new_user_path           = '/users/new'
+  config.create_user_path        = '/users'
+  config.edit_user_path          = '/users/:id/edit'
+  config.update_user_path        = '/users/:id'
+  config.show_user_path          = '/users/:id'
+  config.destroy_user_path       = '/users/:id'
+
+  config.confirmation_user_path         = '/users/confirm/:confirmation_code'
+  config.confirmation_resend_user_path  = '/users/confirmation_resend'
+
+  config.forgot_password_user_path      = '/users/forgot_password'
 end

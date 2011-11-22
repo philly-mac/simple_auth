@@ -4,6 +4,10 @@ require "#{base}/lib/config"
 require "#{base}/lib/helpers"
 require "#{base}/lib/user_methods"
 
+require "#{base}/lib/setup"
+
+require "#{base}/lib/common/user_methods"
+
 require "#{base}/lib/methods/session_methods"
 require "#{base}/lib/methods/user_methods"
 

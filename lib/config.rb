@@ -12,11 +12,11 @@ module SimpleAuth
         getter = :"#{name}"
         setter = :"#{name}="
 
-        define_singleton_method :"#{setter}" do |new_val|
+        define_singleton_method setter do |new_val|
           class_variable_set "@@#{name}", new_val
         end
 
-        define_singleton_method :"#{getter}" do
+        define_singleton_method getter do
           class_variable_get "@@#{name}"
         end
       end
