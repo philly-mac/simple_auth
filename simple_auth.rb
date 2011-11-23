@@ -15,3 +15,4 @@ require "#{base}/lib/http_verbs/session_methods"
 require "#{base}/lib/http_verbs/user_methods"
 
 require "#{base}/lib/properties/data_mapper"
+require "#{base}/lib/properties/sequel"
