@@ -21,19 +21,24 @@ module SimpleAuth
 
           attr_accessor :password, :password_confirmation
 
-          def custom_validate_hooks
+
+          def simple_auth_validate
             validates_presence     [:password, :password_confirmation] if new?
-            validates_confirmation :password                           if !u.password.blank?
-            validates_length_range 6..32,    :username                 if username_entered?
+            validates_confirmation :password                           if !password.blank?
+            validates_length_range 6..32,       :username              if username_entered?
             validates_unique       :username                           if username_entered?
-            validates_length_range 5..255,   :email
+            validates_length_range 5..255,      :email
             validates_unique       :email
-            validates_format       :email,   /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}\b/
+            validates_format       email_regex, :email
             encrypt_password                                           if password_changed_requested?
-            validates_length_range :crypted_password, 10..32
+            validates_length_range 10..255,      :crypted_password
           end
 
-          def custom_before_save_hooks
+          def email_regex
+            /^([^\s]+)((?:[-a-z0-9]\.)[a-z]{2,})$/i
+          end
+
+          def simple_auth_before_save
             create_perishable_token if new?
           end
 
