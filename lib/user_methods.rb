@@ -10,10 +10,9 @@ module SimpleAuth
 
     module ClassMethods
 
-      def activate(token)
+      def activate!(token)
         if u = self.first(:perishable_token => token)
           u.set_as_active
-          u.save
         end
       end
 
@@ -56,14 +55,14 @@ module SimpleAuth
       end
 
       def active?
-        self.activated? && !activated_at.nil? && activated_at.is_a?(DateTime)
+        activated? && !activated_at.nil? && (/time/i =~ activated_at.class.to_s)
       end
 
       def set_as_active
         self.activated = true
         self.activated_at = Time.now
         create_perishable_token
-        save!
+        save(:validate => false)
       end
       alias_method :activate!, :set_as_active
     end

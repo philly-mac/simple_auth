@@ -25,13 +25,11 @@ module SimpleAuth
           def simple_auth_validate
             validates_presence     [:password, :password_confirmation] if new?
             validates_confirmation :password                           if !password.blank?
-            validates_length_range 6..32,       :username              if username_entered?
-            validates_unique       :username                           if username_entered?
+            validates_length_range 6..32,       :username              if !username.blank?
+            validates_unique       :username                           if !username.blank?
             validates_length_range 5..255,      :email
             validates_unique       :email
             validates_format       email_regex, :email
-            encrypt_password                                           if password_changed_requested?
-            validates_length_range 10..255,      :crypted_password
           end
 
           def email_regex
@@ -39,7 +37,9 @@ module SimpleAuth
           end
 
           def simple_auth_before_save
+            encrypt_password        if password_changed_requested?
             create_perishable_token if new?
+            validates_length_range 10..255,      :crypted_password
           end
 
           def validates_confirmation(attribute)
