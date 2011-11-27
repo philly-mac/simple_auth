@@ -6,10 +6,10 @@ module SimpleAuth
 
         # Index
         map_route = SimpleAuth::Config.index_user_path
-        paramz = defined?(Padrino) ? [:index, :map => '/users'] : ['/users']
+        paramz = defined?(Padrino) ? [:index, {:map => map_route, :priority => :low}] : [map_route]
 
         app.get(*paramz) do
-          SimpleAuth::Common::UserMethods.method_index
+          SimpleAuth::Common::UserMethods.method_index(self, params)
         end
 
         # New
@@ -17,7 +17,7 @@ module SimpleAuth
         paramz = defined?(Padrino) ? [:new, {:map => map_route, :priority => :low}] : [map_route]
 
         app.get(*paramz) do
-          SimpleAuth::Common::UserMethods.method_new(app, params)
+          SimpleAuth::Common::UserMethods.method_new(self, params)
         end
 
         # Create
@@ -25,7 +25,7 @@ module SimpleAuth
         paramz = defined?(Padrino) ? [:create, {:map => map_route, :priority => :low}] : [map_route]
 
         app.post(*paramz) do
-          SimpleAuth::Common::UserMethods.method_create(app, params)
+          SimpleAuth::Common::UserMethods.method_create(self, params)
         end
 
         # Edit
@@ -33,7 +33,7 @@ module SimpleAuth
         paramz = defined?(Padrino) ? [:edit, {:map => map_route, :priority => :low}] : [map_route]
 
         app.get(*paramz) do
-          SimpleAuth::Common::UserMethods.method_edit(app, params)
+          SimpleAuth::Common::UserMethods.method_edit(self, params)
         end
 
         # Update
@@ -41,14 +41,14 @@ module SimpleAuth
         paramz = defined?(Padrino) ? [:update, {:map => map_route, :priority => :low}] : [map_route]
 
         app.put(*paramz) do
-          SimpleAuth::Common::UserMethods.method_update(app, params)
+          SimpleAuth::Common::UserMethods.method_update(self, params)
         end
 
         map_route = SimpleAuth::Config.update_user_path
         paramz = defined?(Padrino) ? [:delete, {:map => map_route, :priority => :low}] : [map_route]
 
         app.delete(*paramz) do
-          SimpleAuth::Common::UserMethods.method_delete(app, params)
+          SimpleAuth::Common::UserMethods.method_delete(self, params)
         end
 
         # Confirm
@@ -56,7 +56,7 @@ module SimpleAuth
         paramz = defined?(Padrino) ? [:confirmation_code, {:map => map_route, :priority => :low}] : [map_route]
 
         app.get(*paramz) do
-          SimpleAuth::Common::UserMethods.method_confirm(app, params)
+          response = SimpleAuth::Common::UserMethods.method_confirm(self, params)
         end
 
         # Confirm resend form
@@ -64,7 +64,7 @@ module SimpleAuth
         paramz = defined?(Padrino) ? [:confirmation_resend, {:map => map_route, :priority => :low}] : [map_route]
 
         app.get(*paramz) do
-          SimpleAuth::Common::UserMethods.method_confirm_resend_form
+          SimpleAuth::Common::UserMethods.method_confirm_resend_form(self, params)
         end
 
         # Confirm resend submit
@@ -72,7 +72,7 @@ module SimpleAuth
         paramz = defined?(Padrino) ? [:confirmation_resend, {:map => map_route, :priority => :low}] : [map_route]
 
         app.put(*paramz) do
-          SimpleAuth::Common::UserMethods.method_confirm_resend
+          SimpleAuth::Common::UserMethods.method_confirm_resend(self, params)
         end
 
         # Forgot password form
@@ -80,7 +80,7 @@ module SimpleAuth
         paramz = defined?(Padrino) ? [:forgot_password, {:map => map_route, :priority => :low}] : [map_route]
 
         app.get(*paramz) do
-          SimpleAuth::Common::UserMethods.method_forgot_password_form
+          SimpleAuth::Common::UserMethods.method_forgot_password_form(self, params)
         end
 
         # Forgot password submit
@@ -88,7 +88,7 @@ module SimpleAuth
         paramz = defined?(Padrino) ? [:forgot_password, {:map => map_route, :priority => :low}] : [map_route]
 
         app.put(*paramz) do
-          SimpleAuth::Common::UserMethods.method_forgot_password
+          SimpleAuth::Common::UserMethods.method_forgot_password(self, params)
         end
 
       end

@@ -21,6 +21,17 @@ module SimpleAuth
 
           attr_accessor :password, :password_confirmation
 
+          class << self
+
+            def get(id)
+              self[id]
+            end
+
+            def simple_auth_allowed_colums(additional_attributes)
+              additional_attributes = [additional_attributes].flatten
+              set_allowed_columns *([:email, :username, :password, :password_confirmation] + additional_attributes)
+            end
+          end
 
           def simple_auth_validate
             validates_presence     [:password, :password_confirmation] if new?
@@ -33,13 +44,25 @@ module SimpleAuth
           end
 
           def email_regex
+            # qtext          = '[^\\x0d\\x22\\x5c\\x80-\\xff]'
+            # dtext          = '[^\\x0d\\x5b-\\x5d\\x80-\\xff]'
+            # atom           = '[^\\x00-\\x20\\x22\\x28\\x29\\x2c\\x2e\\x3a-\\x3c\\x3e\\x40\\x5b-\\x5d\\x7f-\\xff]+'
+            # quoted_pair    = '\\x5c[\\x00-\\x7f]'
+            # domain_literal = '\\x5b(?:#{dtext}|#{quoted_pair})*\\x5d'
+            # quoted_string  = "\\x22(?:#{qtext}|#{quoted_pair})*\\x22"
+            # domain_ref     = atom
+            # sub_domain     = "(?:#{domain_ref}|#{domain_literal})"
+            # word           = "(?:#{atom}|#{quoted_string})"
+            # domain         = "#{sub_domain}(?:\\x2e#{sub_domain})*"
+            # local_part     = "#{word}(?:\\x2e#{word})*"
+            # addr_spec      = "#{local_part}\\x40#{domain}"
+            # /\A#{addr_spec}\z/
             /^([^\s]+)((?:[-a-z0-9]\.)[a-z]{2,})$/i
           end
 
           def simple_auth_before_save
             encrypt_password        if password_changed_requested?
             create_perishable_token if new?
-            validates_length_range 10..255,      :crypted_password
           end
 
           def validates_confirmation(attribute)

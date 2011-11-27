@@ -16,7 +16,11 @@ module SimpleAuth
 
         def login_method(app, http_method, params)
           app.send(http_method, *params) do
-            render '/sessions/new'
+            unless logged_in?
+              render '/sessions/new'
+            else
+              redirect '/'
+            end
           end
         end
       end
