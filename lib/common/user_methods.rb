@@ -5,12 +5,12 @@ module SimpleAuth
       class << self
 
         def method_index(app, params)
-          app.render '/'
+          app.send :render, '/'
         end
 
         def method_new(app, params)
           @user = SimpleAuth::Config.user_object.new
-          app.render '/users/new'
+          app.send :render, '/users/new'
         end
 
         def method_create(app, params)
@@ -21,31 +21,31 @@ module SimpleAuth
             send redirect_method, '/'
           else
             flash[:error] = SimpleAuth::Config.registration_unsuccessful_message
-            app.render '/users/new'
+            app.send :render, '/users/new'
           end
         end
 
         def method_edit(app, params)
           @user = SimpleAuth::Config.user_object.first(params[:id])
-          app.render '/users/edit'
+          app.send :render, '/users/edit'
         end
 
         def method_update(app, params)
           @user = SimpleAuth::Config.user
 
           if @user.save
-            flash[:notice] = SimpleAuth::Config.update_successful_message
+            app.flash[:notice] = SimpleAuth::Config.update_successful_message
             app.send redirect_method, '/'
           else
-            flash[:error] = SimpleAuth::Config.update_unsuccessful_message
-            app.render '/users/new'
+            app.flash[:error] = SimpleAuth::Config.update_unsuccessful_message
+            app.send :render, '/users/new'
           end
         end
 
         def method_delete(app, params)
           @user = SimpleAuth::Config.user.first params[:id]
           @user.destroy if @user
-          send redirect_method, '/'
+          app.send redirect_method, '/'
         end
 
         def method_confirm(app, params)
@@ -53,31 +53,47 @@ module SimpleAuth
             app.flash[:notice] = SimpleAuth::Config.registration_confirmed_message
             app.send redirect_method, '/'
           else
-            flash[:alert] = SimpleAuth::Config.registration_not_confirmed_message
+            app.flash[:alert] = SimpleAuth::Config.registration_not_confirmed_message
             app.send redirect_method, '/'
           end
         end
 
         def method_confirm_resend_form(app, params)
-          app.render '/users/confirmation_resend'
+          app.send :render, '/users/confirmation_resend'
         end
 
         def method_confirm_resend(app, params)
           if user = SimpleAuth::Config.user_object.first(:email => params[:email])
-            deliver(:user, :confirmation_email, user, confirmation_link(user))
+            unless user.active?
+              app.flash[:notice] = "registration.confirmation_resent_message".t
+              app.deliver(:user, :confirmation_email, user)
+            else
+              app.flash[:alert] = "registration.already_confirmed_message".t
+            end
+            app.send redirect_method, '/'
+          else
+            app.flash.now[:alert] = "registration.not_confirmed_message".t
+            app.send :render, '/users/confirmation_resend'
           end
-          app.redirect '/'
         end
 
         def method_forgot_password_form(app, params)
-          app.render '/users/forgot_password'
+          app.send :render, '/users/forgot_password'
         end
 
         def method_forgot_password(app, params)
           if user = SimpleAuth::Config.user_object.first(:email => params[:email])
-            deliver(:user, :confirmation_email, user, confirmation_link(user))
+            password = SimpleAuth::Config.user_object.random_alphanumeric(12)
+            user.password = password
+            user.password_confirmation = password
+            user.save
+            app.flash[:notice] = "registration.password_reset".t
+            app.deliver(:user, :password_reset, user)
+            app.send redirect_method, '/'
+          else
+            app.flash.now[:alert] = "registration.password_not_reset".t
+            app.send :render, '/users/forgot_password'
           end
-          app.redirect '/'
         end
 
       private

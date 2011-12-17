@@ -56,7 +56,7 @@ module SimpleAuth
         paramz = defined?(Padrino) ? [:confirmation_code, {:map => map_route, :priority => :low}] : [map_route]
 
         app.get(*paramz) do
-          response = SimpleAuth::Common::UserMethods.method_confirm(self, params)
+          SimpleAuth::Common::UserMethods.method_confirm(self, params)
         end
 
         # Confirm resend form
