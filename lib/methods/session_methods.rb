@@ -11,7 +11,7 @@ module SimpleAuth
       end
 
       def create
-        user = SimpleAuth::Config.user_object.authenticate(
+        user = SimpleAuth::Config.user_object.call.authenticate(
           params[SimpleAuth::Config.login_field],
           params[SimpleAuth::Config.password_field]
         )

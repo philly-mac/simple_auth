@@ -10,6 +10,7 @@ module SimpleAuth
     module InstanceMethods
 
       def authenticate!
+        puts "CURRENT #{current_user}"
         unless current_user
           yield if block_given?
         end

@@ -49,11 +49,11 @@ module SimpleAuth
         end
 
         def method_confirm(app, params)
-          if SimpleAuth::Config.user_object.activate! params[:confirmation_code]
-            app.flash[:notice] = SimpleAuth::Config.registration_confirmed_message
+          if SimpleAuth::Config.user_object.call.activate! params[:confirmation_code]
+            app.flash[:notice] = SimpleAuth::Config.registration_confirmed_message.call
             app.send redirect_method, '/'
           else
-            app.flash[:alert] = SimpleAuth::Config.registration_not_confirmed_message
+            app.flash[:alert] = SimpleAuth::Config.registration_not_confirmed_message.call
             app.send redirect_method, '/'
           end
         end
@@ -63,10 +63,14 @@ module SimpleAuth
         end
 
         def method_confirm_resend(app, params)
-          if user = SimpleAuth::Config.user_object.first(:email => params[:email])
+          if user = SimpleAuth::Config.user_object.call.first(:email => params[:email])
             unless user.active?
               app.flash[:notice] = "registration.confirmation_resent_message".t
-              app.deliver(:user, :confirmation_email, user)
+              if defined?(::Rails)
+                UserMailer.confirmation_email(user).deliver
+              else
+                app.deliver(:user, :confirmation_email, user)
+              end
             else
               app.flash[:alert] = "registration.already_confirmed_message".t
             end
@@ -82,13 +86,13 @@ module SimpleAuth
         end
 
         def method_forgot_password(app, params)
-          if user = SimpleAuth::Config.user_object.first(:email => params[:email])
-            password = SimpleAuth::Config.user_object.random_alphanumeric(12)
+          if user = SimpleAuth::Config.user_object.call.first(:email => params[:email])
+            password = SimpleAuth::Config.user_object.call.random_alphanumeric(12)
             user.password = password
             user.password_confirmation = password
             user.save
             app.flash[:notice] = "registration.password_reset".t
-            app.deliver(:user, :password_reset, user)
+            UserMailer.password_reset(user).deliver
             app.send redirect_method, '/'
           else
             app.flash.now[:alert] = "registration.password_not_reset".t
