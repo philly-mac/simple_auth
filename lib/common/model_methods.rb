@@ -9,12 +9,12 @@ module SimpleAuth
         end
 
         def method_new(app, params)
-          @user = SimpleAuth::Config.user_object.new
+          @user = SimpleAuth::Config.model_object.new
           app.send :render, '/users/new'
         end
 
         def method_create(app, params)
-          @user = SimpleAuth::Config.user_object.new params[:user]
+          @user = SimpleAuth::Config.model_object.new params[:user]
 
           if @user.save
             app.flash[:notice] = SimpleAuth::Config.registration_successful_message
@@ -26,7 +26,7 @@ module SimpleAuth
         end
 
         def method_edit(app, params)
-          @user = SimpleAuth::Config.user_object.first(params[:id])
+          @user = SimpleAuth::Config.model_object.first(params[:id])
           app.send :render, '/users/edit'
         end
 
@@ -49,7 +49,7 @@ module SimpleAuth
         end
 
         def method_confirm(app, params)
-          if SimpleAuth::Config.user_object.call.activate! params[:confirmation_code]
+          if SimpleAuth::Config.model_object.call.activate! params[:confirmation_code]
             app.flash[:notice] = SimpleAuth::Config.registration_confirmed_message.call
             app.send redirect_method, '/'
           else
@@ -63,11 +63,11 @@ module SimpleAuth
         end
 
         def method_confirm_resend(app, params)
-          if user = SimpleAuth::Config.user_object.call.first(:email => params[:email])
+          if user = SimpleAuth::Config.model_object.call.first(:email => params[:email])
             unless user.active?
               app.flash[:notice] = "registration.confirmation_resent_message".t
               if defined?(::Rails)
-                UserMailer.confirmation_email(user).deliver
+                SimpleAuth::Config.confirmation_email_notification.call(user)
               else
                 app.deliver(:user, :confirmation_email, user)
               end
@@ -86,13 +86,13 @@ module SimpleAuth
         end
 
         def method_forgot_password(app, params)
-          if user = SimpleAuth::Config.user_object.call.first(:email => params[:email])
-            password = SimpleAuth::Config.user_object.call.random_alphanumeric(12)
+          if user = SimpleAuth::Config.model_object.call.first(:email => params[:email])
+            password = SimpleAuth::Config.model_object.call.random_alphanumeric(12)
             user.password = password
             user.password_confirmation = password
             user.save
             app.flash[:notice] = "registration.password_reset".t
-            UserMailer.password_reset(user).deliver
+            SimpleAuth::Config.password_reset_notification.call(user)
             app.send redirect_method, '/'
           else
             app.flash.now[:alert] = "registration.password_not_reset".t

@@ -13,7 +13,7 @@ module SimpleAuth
         end
 
         def login_method(app, params)
-          user = SimpleAuth::Config.user_object.call.authenticate(
+          user = SimpleAuth::Config.model_object.call.authenticate(
             params[SimpleAuth::Config.login_field.call],
             params[SimpleAuth::Config.password_field.call]
           )
