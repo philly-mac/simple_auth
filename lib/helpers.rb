@@ -35,6 +35,8 @@ module SimpleAuth
         !logged_in?
       end
 
+    private
+
       def serialize_current_user(user)
         session[:logged_in_user] = "#{user.class}:#{user.id}"
       end

@@ -24,7 +24,6 @@ module SimpleAuth
               app.flash[:notice] = SimpleAuth::Config.authenticated_message.call
               app.send redirect_method, (params[:redirect_path] || '/')
             else
-              puts "UNCONFIRMED"
               app.flash.now[:alert] = SimpleAuth::Config.registration_unconfirmed_message.call
               app.send :render, '/sessions/new'
             end
