@@ -17,7 +17,7 @@ module SimpleAuth
           @user = SimpleAuth::Config.user_object.new params[:user]
 
           if @user.save
-            flash[:notice] = SimpleAuth::Config.registration_successful_message
+            app.flash[:notice] = SimpleAuth::Config.registration_successful_message
             send redirect_method, '/'
           else
             flash[:error] = SimpleAuth::Config.registration_unsuccessful_message
