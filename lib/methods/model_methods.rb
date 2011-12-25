@@ -1,6 +1,6 @@
 module SimpleAuth
   module Methods
-    module UserMethods
+    module ModelMethods
 
       def self.included(base)
         base.class_eval do

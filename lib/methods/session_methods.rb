@@ -11,7 +11,7 @@ module SimpleAuth
       end
 
       def create
-        SimpleAuth::Common::SessionMethods.login_method_form(self, params)
+        SimpleAuth::Common::SessionMethods.login_method(self, params)
       end
 
       def destroy

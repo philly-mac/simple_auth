@@ -1,6 +1,6 @@
 module SimpleAuth
   module Common
-    module UserMethods
+    module ModelMethods
 
       class << self
 

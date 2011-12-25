@@ -1,6 +1,6 @@
 module SimpleAuth
   module HTTPVerbs
-    module UserMethods
+    module ModelMethods
       def self.registered(app)
         # We'll even do the user registration methods for you as well
 

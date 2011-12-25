@@ -8,12 +8,12 @@ module SimpleAuth
           unless app.logged_in?
             app.send :render, '/sessions/new'
           else
-            send redirect_method, '/'
+            app.send redirect_method, '/'
           end
         end
 
         def login_method(app, params)
-          user = SimpleAuth::Config.user_object.authenticate(
+          user = SimpleAuth::Config.user_object.call.authenticate(
             params[SimpleAuth::Config.login_field.call],
             params[SimpleAuth::Config.password_field.call]
           )
@@ -22,9 +22,9 @@ module SimpleAuth
             if user.active?
               app.current_user = user
               app.flash[:notice] = SimpleAuth::Config.authenticated_message.call
-              send redirect_method, (params[:redirect_path] || '/')
-              return
+              app.send redirect_method, (params[:redirect_path] || '/')
             else
+              puts "UNCONFIRMED"
               app.flash.now[:alert] = SimpleAuth::Config.registration_unconfirmed_message.call
               app.send :render, '/sessions/new'
             end
@@ -36,11 +36,10 @@ module SimpleAuth
 
         def logout_method(app, params)
           if app.logged_in?
-              app.log_out!
-              flash[:notice] = SimpleAuth::Config.logged_out_message.call
-            end
-            send redirect_method, '/sessions/new'
+            app.log_out!
+            app.flash[:notice] = SimpleAuth::Config.logged_out_message.call
           end
+          app.send redirect_method, '/sessions/new'
         end
 
       private
