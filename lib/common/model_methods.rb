@@ -9,12 +9,12 @@ module SimpleAuth
         end
 
         def method_new(app, params)
-          @user = SimpleAuth::Config.model_object.new
+          @user = SimpleAuth::Config.model_object.call.new
           app.send :render, '/users/new'
         end
 
         def method_create(app, params)
-          @user = SimpleAuth::Config.model_object.new params[:user]
+          @user = SimpleAuth::Config.model_object.call.new params[:user]
 
           if @user.save
             app.flash[:notice] = SimpleAuth::Config.registration_successful_message
@@ -26,24 +26,24 @@ module SimpleAuth
         end
 
         def method_edit(app, params)
-          @user = SimpleAuth::Config.model_object.first(params[:id])
+          @user = SimpleAuth::Config.model_object.call.first(params[:id])
           app.send :render, '/users/edit'
         end
 
         def method_update(app, params)
-          @user = SimpleAuth::Config.user
+          @user = SimpleAuth::Config.model_object.call
 
           if @user.save
-            app.flash[:notice] = SimpleAuth::Config.update_successful_message
+            app.flash[:notice] = SimpleAuth::Config.update_successful_message.call
             app.send redirect_method, '/'
           else
-            app.flash[:error] = SimpleAuth::Config.update_unsuccessful_message
+            app.flash[:error] = SimpleAuth::Config.update_unsuccessful_message.call
             app.send :render, '/users/new'
           end
         end
 
         def method_delete(app, params)
-          @user = SimpleAuth::Config.user.first params[:id]
+          @user = SimpleAuth::Config.model_object.call.first params[:id]
           @user.destroy if @user
           app.send redirect_method, '/'
         end
