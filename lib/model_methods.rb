@@ -13,6 +13,9 @@ module SimpleAuth
       def activate!(token)
         if u = self.first(:perishable_token => token)
           u.activate!
+          u
+        else
+          nil
         end
       end
 

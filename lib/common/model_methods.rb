@@ -49,7 +49,8 @@ module SimpleAuth
         end
 
         def method_confirm(app, params)
-          if SimpleAuth::Config.model_object.call.activate! params[:confirmation_code]
+          if user = SimpleAuth::Config.model_object.call.activate!(params[:confirmation_code])
+            app.current_user = user
             app.flash[:notice] = SimpleAuth::Config.registration_confirmed_message.call
             app.send redirect_method, '/'
           else
