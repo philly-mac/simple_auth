@@ -64,7 +64,7 @@ module SimpleAuth
         end
 
         def method_confirm_resend(app, params)
-          if user = SimpleAuth::Config.model_object.call.first(:email => params[:email])
+          if user = SimpleAuth::Config.model_object.call.first(SimpleAuth::Util.to_params({:email => params[:email]}))
             unless user.active?
               app.flash[:notice] = "registration.confirmation_resent_message".t
               if defined?(::Rails)
@@ -87,7 +87,7 @@ module SimpleAuth
         end
 
         def method_forgot_password(app, params)
-          if user = SimpleAuth::Config.model_object.call.first(:email => params[:email])
+          if user = SimpleAuth::Config.model_object.call.first(SimpleAuth::Util.to_params({:email => params[:email]}))
             password = SimpleAuth::Config.model_object.call.random_alphanumeric(12)
             user.password = password
             user.password_confirmation = password

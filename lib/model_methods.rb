@@ -11,7 +11,7 @@ module SimpleAuth
     module ClassMethods
 
       def activate!(token)
-        if u = self.first(:perishable_token => token)
+        if u = first(SimpleAuth::Util.to_params({perishable_token: token}))
           u.activate!
           u
         else
@@ -20,7 +20,7 @@ module SimpleAuth
       end
 
       def authenticate(email, password)
-        u = self.first(:email => email)
+        u = self.first(SimpleAuth::Util.to_params({:email => email}))
         u && u.has_password?(password) ? u : nil
       end
 
@@ -38,6 +38,14 @@ module SimpleAuth
 
     module InstanceMethods
 
+      def create_perishable_token
+        token = ''
+        begin
+          token = self.class.random_alphanumeric(64)
+        end while self.class.first(SimpleAuth::Util.to_params({perishable_token: token}))
+        self.perishable_token = token
+      end
+
       def username_entered?
         !username.blank?
       end
@@ -48,14 +56,6 @@ module SimpleAuth
 
       def encrypt_password
         self.crypted_password = BCrypt::Password.create(password, :cost => 10) if password.present?
-      end
-
-      def create_perishable_token
-        token = ''
-        begin
-          token = self.class.random_alphanumeric(64)
-        end while User.first(:perishable_token => token)
-        self.perishable_token = token
       end
 
       def has_password?(password)
