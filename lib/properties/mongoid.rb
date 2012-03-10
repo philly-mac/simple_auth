@@ -7,7 +7,6 @@ module SimpleAuth
 
           include ::Mongoid::Document
           include ::Mongoid::Paranoia
-          include ::Mongoid::Versioning
           include ::Mongoid::Timestamps
 
           attr_accessor :password, :password_confirmation
@@ -22,7 +21,7 @@ module SimpleAuth
 
           validates_length_of       :username,              :if => :username_entered?, :in => (6..32)
           validates_uniqueness_of   :username,              :if => :username_entered?
-          validates_uniqueness_of   :email
+          validates_uniqueness_of   :email,                 :case_sensitive => false
           validates_format_of       :email,                 :with => /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\Z/i
           validates_uniqueness_of   :perishable_token
           validates_presence_of     :password,              :if => :new?
