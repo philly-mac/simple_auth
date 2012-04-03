@@ -38,21 +38,15 @@ module SimpleAuth
     private
 
       def serialize_current_user(user)
-        session[:logged_in_user] = "#{user.class}:#{user.id}"
+        session[:logged_in_user] = user.id.to_s
       end
 
       def unserialize_current_user
         return @current_user if @current_user
+        return nil           if !session[:logged_in_user]
 
-        if /^(.+):(\w+)$/ =~ session[:logged_in_user]
-          user_object = Kernel.const_get($1) unless $1.nil?
-          user_id = $2
-
-          @current_user = $1 && $2 ? user_object.find(user_id) : nil
-          @current_user
-        else
-          nil
-        end
+        @current_user = SimpleAuth::Config.model_object.call.find(session[:logged_in_user])
+        @current_user
       end
     end
 
