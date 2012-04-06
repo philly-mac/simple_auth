@@ -16,7 +16,6 @@ module SimpleAuth
           field :crypted_password,  type: String,   default: ''
           field :perishable_token,  type: String,   default: ''
           field :activated,         type: Boolean,  default: false
-          field :role,              type: String,   default: ''
           field :activated_at,      type: DateTime
 
           validates_length_of       :username,              :if => :username_entered?, :in => (6..32)

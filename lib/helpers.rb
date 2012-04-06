@@ -45,7 +45,8 @@ module SimpleAuth
         return @current_user if @current_user
         return nil           if !session[:logged_in_user]
 
-        @current_user = SimpleAuth::Config.model_object.call.find(session[:logged_in_user])
+        method_call = defined?(::DataMapper) ? 'get' : 'find'
+        @current_user = SimpleAuth::Config.model_object.call.send(method_call, session[:logged_in_user])
         @current_user
       end
     end

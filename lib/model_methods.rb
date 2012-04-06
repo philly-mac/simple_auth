@@ -70,7 +70,7 @@ module SimpleAuth
         self.activated = true
         self.activated_at = Time.now
         create_perishable_token
-        save(:validate => false)
+        defined?(::DataMapper) ? save! : save(:validate => false)
       end
       alias_method :activate!, :set_as_active
     end
