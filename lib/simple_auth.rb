@@ -1,9 +1,9 @@
 base = File.dirname(File.expand_path(__FILE__))
 
 # Application root
-APP_ROOT = "#{File.dirname(File.expand_path(__FILE__))}/.."
+SIMPLE_AUTH_APP_ROOT = "#{File.dirname(File.expand_path(__FILE__))}/.."
 
-$: << "#{APP_ROOT}/lib"
+$: << "#{SIMPLE_AUTH_APP_ROOT}/lib"
 
 require "simple_auth/util"
 require "simple_auth/config"
