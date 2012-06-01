@@ -15,8 +15,8 @@ require "simple_auth/setup"
 require "simple_auth/common/model_methods"
 require "simple_auth/common/session_methods"
 
-require "simple_auth/methods/session_methods"
-require "simple_auth/methods/model_methods"
+require "simple_auth/controllers/session_methods"
+require "simple_auth/controllers/model_methods"
 
 require "simple_auth/http_verbs/session_methods"
 require "simple_auth/http_verbs/model_methods"
