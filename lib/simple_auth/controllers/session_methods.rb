@@ -1,5 +1,5 @@
 module SimpleAuth
-  module Methods
+  module Controllers
     module SessionMethods
 
       def index
