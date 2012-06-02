@@ -35,6 +35,11 @@ module SimpleAuth
         !logged_in?
       end
 
+      def user_model
+        # Please overwrite this method in the controller you
+        # include it into
+      end
+
     private
 
       def serialize_current_user(user)
@@ -46,7 +51,7 @@ module SimpleAuth
         return nil           if !session[:logged_in_user]
 
         method_call = defined?(::DataMapper) ? 'get' : 'find'
-        @current_user = SimpleAuth::Config.model_object.call.send(method_call, session[:logged_in_user])
+        @current_user = user_model.send(method_call, session[:logged_in_user])
         @current_user
       end
     end
