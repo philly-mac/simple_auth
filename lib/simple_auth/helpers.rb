@@ -1,59 +1,51 @@
 module SimpleAuth
   module Helpers
 
-    def self.included(base)
-      base.class_eval do
-        include InstanceMethods
+    def authenticate!
+      unless current_user
+        yield if block_given?
       end
     end
 
-    module InstanceMethods
+    def current_user
+      unserialize_current_user
+    end
 
-      def authenticate!
-        unless current_user
-          yield if block_given?
-        end
-      end
+    def current_user=(user)
+      serialize_current_user(user)
+    end
 
-      def current_user
-        unserialize_current_user
-      end
+    def log_out!
+      session[:logged_in_user] = nil
+    end
 
-      def current_user=(user)
-        serialize_current_user(user)
-      end
+    def logged_in?
+      !current_user.nil?
+    end
 
-      def log_out!
-        session[:logged_in_user] = nil
-      end
+    def logged_out?
+      !logged_in?
+    end
 
-      def logged_in?
-        !current_user.nil?
-      end
+    def user_model
+      # Please overwrite this method in the controller you
+      # include it into
+      raise "You have not overwritten the user_model method yet!"
+    end
 
-      def logged_out?
-        !logged_in?
-      end
+  private
 
-      def user_model
-        # Please overwrite this method in the controller you
-        # include it into
-      end
+    def serialize_current_user(user)
+      session[:logged_in_user] = user.id.to_s
+    end
 
-    private
+    def unserialize_current_user
+      return @current_user if @current_user
+      return nil           if !session[:logged_in_user]
 
-      def serialize_current_user(user)
-        session[:logged_in_user] = user.id.to_s
-      end
-
-      def unserialize_current_user
-        return @current_user if @current_user
-        return nil           if !session[:logged_in_user]
-
-        method_call = defined?(::DataMapper) ? 'get' : 'find'
-        @current_user = user_model.send(method_call, session[:logged_in_user])
-        @current_user
-      end
+      method_call = defined?(::DataMapper) ? 'get' : 'find'
+      @current_user = user_model.send(method_call, session[:logged_in_user])
+      @current_user
     end
 
   end
