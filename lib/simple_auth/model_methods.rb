@@ -24,16 +24,6 @@ module SimpleAuth
         u && u.has_password?(password) ? u : nil
       end
 
-      def random_alphanumeric(length)
-        alphanumeric = ('a'..'z').to_a + (0..10).to_a
-        (1..length).map {
-          if rand(2) == 0
-            letter = alphanumeric[rand(alphanumeric.size)];
-            rand(2) == 0 ? letter.to_s : letter.to_s.upcase
-          end
-        }.join
-      end
-
     end
 
     module InstanceMethods
@@ -41,7 +31,7 @@ module SimpleAuth
       def create_perishable_token
         token = ''
         begin
-          token = self.class.random_alphanumeric(64)
+          token = SecureRandom.urlsafe_base64(64)
         end while self.class.first(SimpleAuth::Util.to_params({perishable_token: token}))
         self.perishable_token = token
       end
