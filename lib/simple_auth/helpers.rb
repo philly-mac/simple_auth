@@ -44,7 +44,11 @@ module SimpleAuth
 
     def unserialize_current_user(scope = :default)
       return @current_user if @current_user
-      return nil           if !session[:logged_in_user] || !session[:logged_in_user][scope]
+
+      if !session[:logged_in_user] || !session[:logged_in_user].is_a?(Hash) || !session[:logged_in_user][scope]
+        session[:logged_in_user] = {}
+        return nil
+      end
 
       method_call = defined?(::DataMapper) ? 'get' : 'find'
       @current_user = user_model.send(method_call, session[:logged_in_user][scope])
