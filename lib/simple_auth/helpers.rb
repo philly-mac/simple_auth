@@ -2,7 +2,7 @@ module SimpleAuth
   module Helpers
 
     def authenticate!(scope = :default)
-      unless current_user(scope)
+      unless logged_in?(scope)
         yield if block_given?
       end
     end
@@ -17,7 +17,11 @@ module SimpleAuth
 
     def log_out!(scope = :default)
       if session[:logged_in_user]
-        session[:logged_in_user][scope] = nil
+        if session[:logged_in_user].is_a?(Hash)
+          session[:logged_in_user][scope] = nil
+        else
+          session[:logged_in_user] = {}
+        end
       end
     end
 
@@ -37,13 +41,14 @@ module SimpleAuth
   private
 
     def store_current_user(user, scope = :default)
-      session[:logged_in_user] = {} unless session[:logged_in_user]
+      session[:logged_in_user]        = {} if !session[:logged_in_user] || !session[:logged_in_user].is_a?(Hash)
       session[:logged_in_user][scope] = user.id.to_s
     end
 
     def load_current_user(scope = :default)
       return @current_user if @current_user
-      return nil           if !session[:logged_in_user] || !session[:logged_in_user][scope]
+      session[:logged_in_user] = {} if !session[:logged_in_user].is_a?(Hash)
+      return nil                    if session[:logged_in_user].to_s.strip == '' || session[:logged_in_user][scope].to_s.strip == ''
 
       method_call = defined?(::DataMapper) ? 'get' : 'find'
       @current_user = user_model.send(method_call, session[:logged_in_user][scope])
