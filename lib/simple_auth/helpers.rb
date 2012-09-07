@@ -27,6 +27,7 @@ module SimpleAuth
 
     def logged_in?(scope = :default)
       !current_user(scope).nil?
+    end
 
     def logged_out?(scope = :default)
       !logged_in?(scope)
