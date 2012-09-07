@@ -8,11 +8,11 @@ module SimpleAuth
     end
 
     def current_user(scope = :default)
-      unserialize_current_user(scope)
+      load_current_user(scope)
     end
 
     def current_user=(user, scope = :default)
-      serialize_current_user(user, scope)
+      store_current_user(user, scope)
     end
 
     def log_out!(scope = :default)
@@ -23,7 +23,6 @@ module SimpleAuth
 
     def logged_in?(scope = :default)
       !current_user(scope).nil?
-    end
 
     def logged_out?(scope = :default)
       !logged_in?(scope)
@@ -37,12 +36,12 @@ module SimpleAuth
 
   private
 
-    def serialize_current_user(user, scope = :default)
+    def store_current_user(user, scope = :default)
       session[:logged_in_user] = {} unless session[:logged_in_user]
       session[:logged_in_user][scope] = user.id.to_s
     end
 
-    def unserialize_current_user(scope = :default)
+    def load_current_user(scope = :default)
       return @current_user if @current_user
       return nil           if !session[:logged_in_user] || !session[:logged_in_user][scope]
 
