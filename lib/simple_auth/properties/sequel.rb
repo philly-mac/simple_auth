@@ -27,7 +27,7 @@ module SimpleAuth
               self[id]
             end
 
-            def simple_auth_allowed_colums(additional_attributes)
+            def simple_auth_allowed_colums(*additional_attributes)
               additional_attributes = [additional_attributes].flatten
               set_allowed_columns *([:email, :username, :password, :password_confirmation] + additional_attributes)
             end

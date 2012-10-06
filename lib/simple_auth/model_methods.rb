@@ -53,7 +53,7 @@ module SimpleAuth
       end
 
       def active?
-        activated? && !activated_at.nil? && (/time/i =~ activated_at.class.to_s)
+        activated && !activated_at.nil? && (/time/i =~ activated_at.class.to_s)
       end
 
       def set_as_active
