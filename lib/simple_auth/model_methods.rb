@@ -11,7 +11,7 @@ module SimpleAuth
     module ClassMethods
 
       def activate!(token)
-        if resource = SimpleAuth::Util.first(self, {:perishable_token => token})
+        if resource = SimpleAuth::Util.first(self.class, {:perishable_token => token})
           resource.activate!
           resource
         else
@@ -20,7 +20,7 @@ module SimpleAuth
       end
 
       def authenticate(email, password)
-        resource = SimpleAuth::Util.first(self, {:email => email})
+        resource = SimpleAuth::Util.first(self.class, {:email => email})
         resource && resource.has_password?(password) ? resource : nil
       end
 
@@ -32,7 +32,7 @@ module SimpleAuth
         token = ''
         begin
           token = SecureRandom.urlsafe_base64(64)
-        end while SimpleAuth::Util.first(self, {:perishable_token => token})
+        end while SimpleAuth::Util.first(self.class, {:perishable_token => token})
         self.perishable_token = token
       end
 

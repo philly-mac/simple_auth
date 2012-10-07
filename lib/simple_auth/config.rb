@@ -1,5 +1,3 @@
-puts "LODING CONFIG"
-
 module SimpleAuth
   class Config
 
