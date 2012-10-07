@@ -2,6 +2,7 @@ $: << "#{File.dirname(File.expand_path(__FILE__))}/../lib"
 
 require "securerandom"
 
+require "simple_auth/config"
 require "simple_auth/util"
 require "simple_auth/helpers"
 require "simple_auth/model_methods"
