@@ -51,7 +51,12 @@ module SimpleAuth
       session[:logged_in_user] = {} if !session[:logged_in_user].is_a?(Hash)
       return nil                    if session[:logged_in_user].to_s.strip == '' || session[:logged_in_user][scope].to_s.strip == ''
 
-      method_call = defined?(::DataMapper) ? 'get' : 'find'
+      method_call = case SimpleAuth::Config.library
+      when :datamapper then 'get'
+      when :sequel     then '[]'
+      when :mongoid    then 'find'
+      end
+
       @current_user = user_model.send(method_call, session[:logged_in_user][scope])
       @current_user
     end

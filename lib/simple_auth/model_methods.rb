@@ -11,17 +11,17 @@ module SimpleAuth
     module ClassMethods
 
       def activate!(token)
-        if u = first(SimpleAuth::Util.to_params({perishable_token: token}))
-          u.activate!
-          u
+        if resource = SimpleAuth::Util.first(self, {:perishable_token => token})
+          resource.activate!
+          resource
         else
           nil
         end
       end
 
       def authenticate(email, password)
-        u = self.first(SimpleAuth::Util.to_params({:email => email}))
-        u && u.has_password?(password) ? u : nil
+        resource = SimpleAuth::Util.first(self, {:email => email})
+        resource && resource.has_password?(password) ? resource : nil
       end
 
     end
@@ -32,7 +32,7 @@ module SimpleAuth
         token = ''
         begin
           token = SecureRandom.urlsafe_base64(64)
-        end while self.class.first(SimpleAuth::Util.to_params({perishable_token: token}))
+        end while SimpleAuth::Util.first(self, {:perishable_token => token})
         self.perishable_token = token
       end
 
@@ -60,7 +60,7 @@ module SimpleAuth
         self.activated = true
         self.activated_at = Time.now
         create_perishable_token
-        defined?(::DataMapper) ? save! : save(:validate => false)
+        SimpleAuth::Config.library == :datamapper ? save! : save(:validate => false)
       end
       alias_method :activate!, :set_as_active
     end
