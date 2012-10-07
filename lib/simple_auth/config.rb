@@ -5,7 +5,7 @@ module SimpleAuth
 
     @@library = nil
 
-    def library=(library)
+    def self.library=(library)
       if [:datamapper, :sequel, :mongodb].include?(library)
         @@library = library
       else
@@ -14,7 +14,7 @@ module SimpleAuth
       end
     end
 
-    def library
+    def self.library
       if @@library
         @@library
       else
